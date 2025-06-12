@@ -4,13 +4,14 @@ import docx
 from openai import OpenAI
 import os
 
-# Initialize OpenAI client
+# Initialize OpenAI client using API key from GitHub secrets
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-st.set_page_config(page_title="Report Q&A App", layout="centered")
-st.title("📄 GPT-Powered Report Q&A")
+# Streamlit page setup
+st.set_page_config(page_title="Report Q&A Chatbot", layout="centered")
+st.title("📄 Chat with Your Report (Powered by GPT-4)")
 
-# Function to extract text from uploaded file
+# Function to extract text from uploaded document
 def extract_text(file):
     ext = file.name.split('.')[-1].lower()
     text = ""
@@ -33,23 +34,31 @@ def extract_text(file):
     
     return text
 
-# File uploader
-uploaded_file = st.file_uploader("Upload a report (.pdf, .docx, .txt)", type=["pdf", "docx", "txt"])
+# Upload file
+uploaded_file = st.file_uploader("📤 Upload a report (.pdf, .docx, .txt)", type=["pdf", "docx", "txt"])
 
 if uploaded_file:
-        with st.spinner("📄 Reading and parsing the file..."):
-        document_text = extract_text(uploaded_file)
-
-    st.success("✅ File successfully processed!")
-    st.text_area("📃 Preview of Extracted Text:", document_text[:2000], height=250)
-
-    # question = st.text_input(...)
-    # GPT call...
-
     with st.spinner("📄 Reading and parsing the file..."):
         document_text = extract_text(uploaded_file)
 
     st.success("✅ File successfully processed!")
-    st.text_area("📃 Preview of Extracted Text:", document_text[:2000], height=250)
+    st.text_area("📃 Preview of Extracted Text:", document_text[:2000], height=200)
 
- 
+    # Initialize chat history in session state
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = [
+            {"role": "system", "content": "You are a helpful assistant answering questions based only on the uploaded report."},
+            {"role": "user", "content": f"Here is the report:\n\n{document_text[:6000]}"}
+        ]
+
+    # Chat interface
+    user_question = st.chat_input("💬 Ask a question about the report...")
+
+    if user_question:
+        # Add user message to history
+        st.session_state.chat_history.append({"role": "user", "content": user_question})
+
+        with st.spinner("🤖 GPT is thinking..."):
+            response = client.chat.completions.create(
+                model="gpt-4",
+                me
