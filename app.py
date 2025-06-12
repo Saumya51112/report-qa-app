@@ -45,4 +45,30 @@ if uploaded_file:
     st.text_area("📃 Preview of Extracted Text:", document_text[:2000], height=200)
 
     # Initialize chat memory
-    if "chat_history" not i_
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = [
+            {"role": "system", "content": "You are a helpful assistant answering questions based only on the uploaded report."},
+            {"role": "user", "content": f"Here is the report:\n\n{document_text[:6000]}"}
+        ]
+
+    # User input
+    user_question = st.chat_input("💬 Ask a question about the report...")
+
+    if user_question:
+        st.session_state.chat_history.append({"role": "user", "content": user_question})
+
+        with st.spinner("🤖 GPT is thinking..."):
+            response = client.chat.completions.create(
+                model="gpt-4",
+                messages=st.session_state.chat_history
+            )
+
+            answer = response.choices[0].message.content.strip()
+            st.session_state.chat_history.append({"role": "assistant", "content": answer})
+
+    # Display chat history
+    for msg in st.session_state.chat_history[2:]:  # Skip system & report intro
+        if msg["role"] == "user":
+            st.chat_message("user").markdown(msg["content"])
+        elif msg["role"] == "assistant":
+            st.chat_message("assistant").markdown(msg["content"])
