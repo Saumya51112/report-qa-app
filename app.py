@@ -52,19 +52,4 @@ if uploaded_file:
     st.success("✅ File successfully processed!")
     st.text_area("📃 Preview of Extracted Text:", document_text[:2000], height=250)
 
-    # Question input
-    question = st.text_input("💬 Ask a question about the report:")
-
-    if question:
-        with st.spinner("🤖 GPT is thinking..."):
-            prompt = f"""Answer this question based only on the following report:\n\n{document_text[:6000]}\n\nQuestion: {question}"""
-
-            response = client.chat.completions.create(
-                model="gpt-4",
-                messages=[{"role": "user", "content": prompt}]
-            )
-
-            answer = response.choices[0].message.content
-
-        st.markdown("### 🧠 GPT's Answer:")
-        st.write(answer)
+ 
