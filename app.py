@@ -4,10 +4,10 @@ import docx
 from openai import OpenAI
 import os
 
-# Initialize OpenAI client using API key from GitHub secrets
+# Initialize OpenAI client using environment variable (API key stored as secret)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# Streamlit page setup
+# Set up Streamlit page
 st.set_page_config(page_title="Report Q&A Chatbot", layout="centered")
 st.title("📄 Chat with Your Report (Powered by GPT-4)")
 
@@ -34,7 +34,7 @@ def extract_text(file):
     
     return text
 
-# Upload file
+# Upload section
 uploaded_file = st.file_uploader("📤 Upload a report (.pdf, .docx, .txt)", type=["pdf", "docx", "txt"])
 
 if uploaded_file:
@@ -44,21 +44,5 @@ if uploaded_file:
     st.success("✅ File successfully processed!")
     st.text_area("📃 Preview of Extracted Text:", document_text[:2000], height=200)
 
-    # Initialize chat history in session state
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = [
-            {"role": "system", "content": "You are a helpful assistant answering questions based only on the uploaded report."},
-            {"role": "user", "content": f"Here is the report:\n\n{document_text[:6000]}"}
-        ]
-
-    # Chat interface
-    user_question = st.chat_input("💬 Ask a question about the report...")
-
-    if user_question:
-        # Add user message to history
-        st.session_state.chat_history.append({"role": "user", "content": user_question})
-
-        with st.spinner("🤖 GPT is thinking..."):
-            response = client.chat.completions.create(
-                model="gpt-4",
-                me
+    # Initialize chat memory
+    if "chat_history" not i_
