@@ -39,10 +39,17 @@ if uploaded_file:
     if question:
         with st.spinner("Asking GPT..."):
             prompt = f"Answer this question based only on the following report:\n\n{text[:6000]}\n\nQuestion: {question}"
-            response = openai.ChatCompletion.create(
-                model="gpt-4",
-                messages=[{"role": "user", "content": prompt}]
-            )
+            from openai import OpenAI
+
+client = OpenAI()
+
+response = client.chat.completions.create(
+    model="gpt-4",
+    messages=[{"role": "user", "content": prompt}]
+)
+
+answer = response.choices[0].message.content
+
             answer = response.choices[0].message['content']
             st.markdown("### 🧠 GPT's Answer")
             st.write(answer)
