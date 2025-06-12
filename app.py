@@ -1,9 +1,8 @@
 import streamlit as st
 import fitz  # PyMuPDF
 import docx
-import openai
+from openai import OpenAI
 import os
-
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 st.set_page_config(page_title="Report Q&A App", layout="centered")
