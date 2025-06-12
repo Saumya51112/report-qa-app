@@ -37,6 +37,15 @@ def extract_text(file):
 uploaded_file = st.file_uploader("Upload a report (.pdf, .docx, .txt)", type=["pdf", "docx", "txt"])
 
 if uploaded_file:
+        with st.spinner("📄 Reading and parsing the file..."):
+        document_text = extract_text(uploaded_file)
+
+    st.success("✅ File successfully processed!")
+    st.text_area("📃 Preview of Extracted Text:", document_text[:2000], height=250)
+
+    # question = st.text_input(...)
+    # GPT call...
+
     with st.spinner("📄 Reading and parsing the file..."):
         document_text = extract_text(uploaded_file)
 
